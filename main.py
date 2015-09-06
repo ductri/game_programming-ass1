@@ -11,6 +11,9 @@ main_controller = MainController(event_controller, env_controller)
 
 main_controller.init_game()
 
+# Control fps
+clock = pygame.time.Clock()
+
 while not main_controller.quit_game:
     # Listen events
     event_controller.run()
@@ -19,4 +22,8 @@ while not main_controller.quit_game:
     main_controller.run()
 
     pygame.display.flip()
+
+    # Approximately 60fps
+    clock.tick(60)
+
 pygame.quit()
