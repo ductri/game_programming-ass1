@@ -19,9 +19,7 @@ class Hammer(Observer):
         :return: None
         """
         # Constructor of base class
-        Observer.__init__(self,subject)
-        # Register event mouse move to replace cursor with avatar
-        self.register_mouse_motion()
+        Observer.__init__(self, subject)
 
         self.avatar = Factory.get_avatar('hammer_avatar')
         if self.avatar is None:
@@ -30,16 +28,6 @@ class Hammer(Observer):
         self.sound_hit = Factory.get_sound('hammer_hit')
         if self.sound_hit is None:
             raise BaseException('Can not load "hit" sound effect of hammer')
-
-    def update(self, event):
-        """
-        Overloading base function. This function is called when expected
-        event happens
-        :param event: Expected event. In this case, it's mouse move event
-        :return: None
-        """
-        print 'From Hammer: ' + str(event.pos)
-
 
     def hit(self):
         """
