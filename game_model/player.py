@@ -22,7 +22,7 @@ class Player(Observer, Customer):
         # Attributes
 
         # hammer
-        self.hammer = Hammer(event_controller)
+        self.hammer = Hammer(waiter)
 
     def update(self, event):
         """
@@ -31,7 +31,8 @@ class Player(Observer, Customer):
         :return: None
         """
         if event.type == pygame.MOUSEBUTTONDOWN:
-            self.hammer.hit()
+            self.hammer.hit(event.pos)
         elif event.type == pygame.MOUSEMOTION:
-            drawable_object = Drawable(self.hammer.avatar, event.pos, 2)
+            # Just draw the one avatar in list avatars of hammer
+            drawable_object = Drawable(self.hammer.get_avatar(), event.pos, 2)
             self.register('2_hammer', drawable_object)

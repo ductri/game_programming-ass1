@@ -54,7 +54,7 @@ class MainController(Observer, Waiter):
         Init logically game
         :return: None
         """
-        self.screen.fill((255,255,255))
+        self.screen.fill((255, 255, 255))
         background = Factory.get_background()
         if background is not None:
             drawable_object = Drawable(background, (0, 0), 1)
