@@ -1,9 +1,10 @@
 __author__ = 'tri'
 from utils.observer_pattern.observer import Observer
 from utils.factory_pattern.factory import Factory
+from utils.duration.duration import Duration
 
 
-class Hammer(Observer):
+class Hammer:
     """
     This class managers hammer of player, detail:
     - Animation when hammer
@@ -18,8 +19,6 @@ class Hammer(Observer):
         :param subject: subject to observer whenever event hasppens
         :return: None
         """
-        # Constructor of base class
-        Observer.__init__(self, subject)
 
         self.avatar = Factory.get_avatar('hammer_avatar')
         if self.avatar is None:
@@ -36,3 +35,9 @@ class Hammer(Observer):
         :return:
         """
         self.sound_hit.play()
+
+        def work():
+            print 'tri'
+
+        duration = Duration(1, 1, work)
+        duration.start()
