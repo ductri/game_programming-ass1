@@ -1,9 +1,10 @@
 __author__ = 'tri'
 
 
-class KEY:
+class CUSTOMER_KEY:
 
     HAMMER = 'hammer'
+    BACKGROUND = 'background'
 
     def __init__(self):
         return

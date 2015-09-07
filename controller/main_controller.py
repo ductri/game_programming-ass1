@@ -1,8 +1,9 @@
 __author__ = 'tri'
+
 from utils.observer_pattern.observer import Observer
 from utils.factory_pattern.factory import Factory
 from utils.customer_waiter_pattern.waiter import Waiter
-
+from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from game_model.player import Player
 from game_model.drawable import Drawable
 
@@ -58,7 +59,8 @@ class MainController(Observer, Waiter):
         background = Factory.get_background()
         if background is not None:
             drawable_object = Drawable(background, (0, 0), 1)
-            self.register('1_background', drawable_object)
+            key = str(drawable_object.index) + CUSTOMER_KEY.BACKGROUND      # Insert index as prefix keyword to sort
+            self.register(key, drawable_object)
         else:
             raise 'Can not load background image'
 

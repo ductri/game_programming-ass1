@@ -1,12 +1,16 @@
 __author__ = 'tri'
+
 from utils.observer_pattern.observer import Observer
 from utils.customer_waiter_pattern.customer import Customer
+from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from game_model.hammer import Hammer
 from game_model.drawable import Drawable
 
 import pygame
 
-
+"""
+Consider combine with hammer.py into 1 module
+"""
 class Player(Observer, Customer):
 
     def __init__(self, event_controller, waiter):
@@ -35,4 +39,8 @@ class Player(Observer, Customer):
         elif event.type == pygame.MOUSEMOTION:
             # Just draw the one avatar in list avatars of hammer
             drawable_object = Drawable(self.hammer.get_avatar(), event.pos, 2)
-            self.register('2_hammer', drawable_object)
+
+            # Insert index as prefix keyword to sort
+            key = str(drawable_object.index) + CUSTOMER_KEY.HAMMER
+
+            self.register(key, drawable_object)

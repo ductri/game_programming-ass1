@@ -3,7 +3,7 @@ __author__ = 'tri'
 
 class Drawable:
 
-    def __init__(self, bitmap, pos, index_layer):
+    def __init__(self, bitmap, pos, index):
         self.bitmap = bitmap
         self.pos = pos
-        self.index_layer = index_layer
+        self.index = index

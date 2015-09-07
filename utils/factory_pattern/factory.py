@@ -19,7 +19,7 @@ class Factory:
     # Make static function
     get_background = staticmethod(get_background)
 
-    def get_avatar(name):
+    def get_avatars(name):
         if name.lower() == 'hammer_avatars':
             avatars = []
             url = 'resources/hammer_avatar_'
@@ -27,7 +27,7 @@ class Factory:
                 ava = pygame.image.load(url + str(i) + '.png')
                 avatars.append(ava)
             return avatars
-    get_avatar = staticmethod(get_avatar)
+    get_avatars = staticmethod(get_avatars)
 
     def get_sound(name):
         if name.lower() == 'hammer_hit':
