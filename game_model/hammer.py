@@ -3,10 +3,12 @@ __author__ = 'tri'
 from utils.factory_pattern.factory import Factory
 from utils.duration.duration import Duration
 from utils.customer_waiter_pattern.customer import Customer
+from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from game_model.drawable import Drawable
 
 
 # TODO clean code: set private attribute
+# TODO Bug when use scroll mouse
 class Hammer(Customer):
     """
     This class managers hammer of player, detail:
@@ -26,7 +28,7 @@ class Hammer(Customer):
         # Constructor of base class
         Customer.__init__(self, waiter)
 
-        avatars = Factory.get_avatar('hammer_avatars')
+        avatars = Factory.get_avatars('hammer_avatars')
         if avatars is None:
             raise BaseException('Can not load avatar for hammer')
         self.drawable_avatars = []
@@ -41,7 +43,11 @@ class Hammer(Customer):
         if self.sound_hit is None:
             raise BaseException('Can not load "hit" sound effect of hammer')
 
+        # Used to step counter, change image when hammer
         self.index = 0
+
+        # Used to prevent hammer when hammering
+        self.hammering = False
 
     def hit(self, pos):
         """
@@ -49,25 +55,32 @@ class Hammer(Customer):
          2 times concurrent
         :return:
         """
-        self.sound_hit.play()
+        if not self.hammering:
+            self.sound_hit.play()
 
         # Hammer action effect
-        # TODO Need to improve
+        # TODO Need to improve effect
         def work():
-            keep_work = True
+            self.hammering = True
+            keep_work = True    # Consider use self.hammering
             self.index += 1
             if self.index > 8:
                 self.index = 0
                 keep_work = False
+                self.hammering = False
             avatar_index = 4 - abs(self.index - 4)
             self.drawable_avatar = self.drawable_avatars[avatar_index]
             self.drawable_avatar.pos = pos
-            self.register('2_hammer', self.drawable_avatar)
+
+            # Insert index as prefix keyword to sort
+            key = str(self.drawable_avatar.index) + CUSTOMER_KEY.HAMMER
+            self.register(key, self.drawable_avatar)
 
             return keep_work
 
         duration = Duration(0.05, 0.5, work)
-        duration.start()
+        if not self.hammering:
+            duration.start()
 
     def get_avatar(self):
             return self.drawable_avatar.bitmap
