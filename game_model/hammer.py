@@ -1,5 +1,5 @@
 __author__ = 'tri'
-from utils.observer_pattern.observer import Observer
+
 from utils.factory_pattern.factory import Factory
 from utils.duration.duration import Duration
 from utils.customer_waiter_pattern.customer import Customer
@@ -52,16 +52,21 @@ class Hammer(Customer):
         self.sound_hit.play()
 
         # Hammer action effect
-
+        # TODO Need to improve
         def work():
-            self.drawable_avatar = self.drawable_avatars[self.index]
+            keep_work = True
+            self.index += 1
+            if self.index > 8:
+                self.index = 0
+                keep_work = False
+            avatar_index = 4 - abs(self.index - 4)
+            self.drawable_avatar = self.drawable_avatars[avatar_index]
             self.drawable_avatar.pos = pos
             self.register('2_hammer', self.drawable_avatar)
-            self.index += 1
-            if self.index > 4:
-                self.index = 0
 
-        duration = Duration(0.1, 0.5, work)
+            return keep_work
+
+        duration = Duration(0.05, 0.5, work)
         duration.start()
 
     def get_avatar(self):

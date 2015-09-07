@@ -23,14 +23,13 @@ class Duration(threading.Thread):
     def run(self):
         start = datetime.datetime.now()
         end = datetime.datetime.now()
-        i = 0
-        while (end - start).total_seconds() < self.time_duration:
+        enable = True
+        while (end - start).total_seconds() < self.time_duration and enable:
             end = datetime.datetime.now()
             time.sleep(self.time_stick)
-            i += 1
 
             # Actually work
             if self.work_function is not None:
-                self.work_function()
+                enable = self.work_function()
             else:
                 raise NotImplementedError
