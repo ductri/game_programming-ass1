@@ -103,3 +103,6 @@ class Hammer(Customer, Observer):
         """
 
         self.pos = pos
+
+    def close(self):
+        self.timer.close()

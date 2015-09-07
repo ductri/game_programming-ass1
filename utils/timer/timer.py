@@ -20,14 +20,14 @@ class Timer(threading.Thread):
         self.work_function = work_function
         self.enable = False
         threading.Thread.__init__(self, name="unknown")
-
+        self.timer_alive = True
         # Run immediately
         super(Timer, self).start()
 
     # Override run function of base class: threading
     def run(self):
         # Actually work
-        while 1:
+        while self.timer_alive:
             if self.enable:
                 if self.work_function is not None:
                     self.work_function()
@@ -42,3 +42,7 @@ class Timer(threading.Thread):
     def stop(self):
         print "timer stop"
         self.enable = False
+
+    def close(self):
+        print 'timer is killed'
+        self.timer_alive = False

@@ -52,3 +52,6 @@ class Player(Observer, Customer, Subject):
 
     def register_subject(self, observer):
         self.__observers.append(observer)
+
+    def close(self):
+        self.hammer.close()

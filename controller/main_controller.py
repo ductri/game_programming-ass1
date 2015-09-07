@@ -48,6 +48,7 @@ class MainController(Observer, Waiter):
         :return: None
         """
         if event.type == pygame.QUIT:
+            self.close()
             self.quit_game = True
 
     def init_game(self):
@@ -74,3 +75,6 @@ class MainController(Observer, Waiter):
         self.screen.fill((255, 255, 255))
         for key in sorted(self.objects.keys()):     # TODO: Need to improve
             self.screen.blit(self.objects[key].bitmap, self.objects[key].pos)
+
+    def close(self):
+        self.player.close()
