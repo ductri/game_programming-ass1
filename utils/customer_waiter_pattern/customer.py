@@ -9,5 +9,5 @@ class Customer:
         self.waiter = waiter
         return
 
-    def register(self, keyword, ob):
-        self.waiter.register(keyword, ob)
+    def register_waiter(self, keyword, ob):
+        self.waiter.register_waiter(keyword, ob)

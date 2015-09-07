@@ -20,6 +20,7 @@ class Observer:
     ################
     # Key events   #
     ################
+
     def register_key_event(self):
         self.subject.register_key_down(self)
 
@@ -29,5 +30,9 @@ class Observer:
     def register_special_event(self):
         self.subject.register_special_event(self)
 
+    def register_subject(self):
+        self.subject.register_subject(self)
+
     def update(self, event):
         raise NotImplementedError
+

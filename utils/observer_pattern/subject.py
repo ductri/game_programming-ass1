@@ -5,6 +5,7 @@ class Subject:
     """Abstract class"""
 
     def __init__(self):
+
         return
 
     def register_mouse_down(self):
@@ -23,4 +24,7 @@ class Subject:
         raise NotImplementedError
 
     def register_special_event(self):
+        raise NotImplementedError
+
+    def register_subject(self):
         raise NotImplementedError

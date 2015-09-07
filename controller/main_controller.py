@@ -24,7 +24,7 @@ class MainController(Observer, Waiter):
         self.env = env
 
         # Constructor of base class
-        Observer.__init__(self,event_controller)
+        Observer.__init__(self, event_controller)
         Waiter.__init__(self)
 
         # Register to receive some special events
@@ -60,7 +60,7 @@ class MainController(Observer, Waiter):
         if background is not None:
             drawable_object = Drawable(background, (0, 0), 1)
             key = str(drawable_object.index) + CUSTOMER_KEY.BACKGROUND      # Insert index as prefix keyword to sort
-            self.register(key, drawable_object)
+            self.register_waiter(key, drawable_object)
         else:
             raise 'Can not load background image'
 

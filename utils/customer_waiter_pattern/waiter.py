@@ -9,7 +9,7 @@ class Waiter:
         self.objects = {}
         return
 
-    def register(self, keyword, ob):
+    def register_waiter(self, keyword, ob):
         self.objects[keyword] = ob
 
     def run(self):
