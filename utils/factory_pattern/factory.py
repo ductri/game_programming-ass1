@@ -20,13 +20,20 @@ class Factory:
     get_background = staticmethod(get_background)
 
     def get_avatars(name):
+        avatars = []
         if name.lower() == 'hammer_avatars':
-            avatars = []
             url = 'resources/hammer_avatar_'
             for i in range(1, 6):
                 ava = pygame.image.load(url + str(i) + '.png')
                 avatars.append(ava)
-            return avatars
+        elif name.lower() == 'head_avatars':
+            url = 'resources/head_avatar_'
+            for i in range(1, 2):
+                ava = pygame.image.load(url + str(i) + '.png')
+                avatars.append(ava)
+        else:
+            raise NotImplementedError
+        return avatars
     get_avatars = staticmethod(get_avatars)
 
     def get_sound(name):

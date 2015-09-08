@@ -3,6 +3,7 @@ __author__ = 'tri'
 from utils.factory_pattern.factory import Factory
 from utils.customer_waiter_pattern.customer import Customer
 from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
+from utils.constant.drawable_index import DRAWABLE_INDEX
 from utils.timer.timer import Timer
 from utils.observer_pattern.observer import Observer
 from game_model.drawable import Drawable
@@ -38,7 +39,7 @@ class Hammer(Customer, Observer):
             raise BaseException('Can not load avatar for hammer')
         self.drawable_avatars = []
         for avatar in avatars:
-            drawable_item = Drawable(avatar, (0, 0), 2)
+            drawable_item = Drawable(avatar, (0, 0), DRAWABLE_INDEX.PLAYER)
             self.drawable_avatars.append(drawable_item)
 
         # Default is the first one
@@ -57,6 +58,8 @@ class Hammer(Customer, Observer):
         self.timer = None
 
         self.pos = (0,0)
+
+        self.size = (10,15)     # Height, Width
 
     def hit(self):
         """

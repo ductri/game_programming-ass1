@@ -4,6 +4,7 @@ from utils.observer_pattern.observer import Observer
 from utils.factory_pattern.factory import Factory
 from utils.customer_waiter_pattern.waiter import Waiter
 from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
+from utils.constant.drawable_index import DRAWABLE_INDEX
 from game_model.player import Player
 from game_model.drawable import Drawable
 
@@ -15,6 +16,9 @@ class MainController(Observer, Waiter):
     - Init game
     - Load background
     - Load model
+    This class has role:
+    - Waiter: update screen
+    - Observer: listen and resolve special event, such as: QUIT
     """
 
     def __init__(self, event_controller, env):
@@ -24,11 +28,11 @@ class MainController(Observer, Waiter):
         self.env = env
 
         # Constructor of base class
-        Observer.__init__(self, event_controller)
-        Waiter.__init__(self)
-
+        Observer.__init__(self)
         # Register to receive some special events
-        self.register_special_event()
+        self.register(event_controller, 'special')
+
+        Waiter.__init__(self)
 
         # Attribute declare
         self.quit_game = False
@@ -41,15 +45,17 @@ class MainController(Observer, Waiter):
         self.screen = pygame.display.set_mode(self.env.screen_size)
         pygame.mouse.set_visible(False)    # Hide default mouse cursor
 
-    def update(self, event):
+    def update(self, type_key, event):
         """
-        Called when expected event is happened
+        Override function of base class: Observer
+        This function is called when expected event is happened
         :param event: event is happened
         :return: None
         """
-        if event.type == pygame.QUIT:
-            self.close()
-            self.quit_game = True
+        if type_key == 'quit':
+            if event.type == pygame.QUIT:
+                self.close()
+                self.quit_game = True
 
     def init_game(self):
         """
@@ -59,7 +65,7 @@ class MainController(Observer, Waiter):
         self.screen.fill((255, 255, 255))
         background = Factory.get_background()
         if background is not None:
-            drawable_object = Drawable(background, (0, 0), 1)
+            drawable_object = Drawable(background, (0, 0), DRAWABLE_INDEX.BACKGROUND)
             key = str(drawable_object.index) + CUSTOMER_KEY.BACKGROUND      # Insert index as prefix keyword to sort
             self.register_waiter(key, drawable_object)
         else:

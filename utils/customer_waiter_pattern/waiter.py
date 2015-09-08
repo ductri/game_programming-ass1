@@ -12,5 +12,9 @@ class Waiter:
     def register_waiter(self, keyword, ob):
         self.objects[keyword] = ob
 
+    def unregister_waiter(self, keyword):
+        del self.objects[keyword]
+
     def run(self):
         raise NotImplementedError
+

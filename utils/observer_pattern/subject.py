@@ -5,26 +5,14 @@ class Subject:
     """Abstract class"""
 
     def __init__(self):
-
+        self.__subject_units = {}
         return
 
-    def register_mouse_down(self):
-        raise NotImplementedError
+    def add_subject_unit(self, subject_unit, type_key):
+        self.__subject_units[type_key] = subject_unit
 
-    def register_mouse_motion(self):
-        raise NotImplementedError
+    def set_change(self, type_key, data):
+        self.__subject_units[type_key].notice_all(type_key, data)
 
-    def register_mouse_up(self):
-        raise NotImplementedError
-
-    def register_key_down(self):
-        raise NotImplementedError
-
-    def register_key_up(self):
-        raise NotImplementedError
-
-    def register_special_event(self):
-        raise NotImplementedError
-
-    def register_subject(self):
-        raise NotImplementedError
+    def register(self, observer, type_key):
+        self.__subject_units[type_key].attach(observer)
