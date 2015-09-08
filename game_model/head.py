@@ -20,7 +20,6 @@ class Head(Customer):
         self.dieIndex = 0
         self.timer = None
         self.alive = True
-        self.direction = 1
         self.setPos(pos)
 
         self.avatars = Factory.get_avatars('head_avatars')
@@ -44,12 +43,14 @@ class Head(Customer):
 
     def setPos(self,pos):
         self.pos = pos
+    def getPos(self):
+        return self.Pos
     def setWidth(self,w):
         self.width = w
     def setHeight(self,h):
         self.height = h
 
-    def appear(self, pos):
+    def appear(self):
 
         self.avatarIndex = 0
         drawable_avatar = self.drawable_avatars[self.avatarIndex]
