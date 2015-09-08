@@ -5,10 +5,14 @@ from utils.factory_pattern.factory import Factory
 from utils.customer_waiter_pattern.waiter import Waiter
 from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from utils.constant.drawable_index import DRAWABLE_INDEX
+from utils.constant.NUM_SPRITES import NUM_SPRITES
+from utils.constant.DURATION import DURATION
+from game_model.head import Head
 from game_model.player import Player
 from game_model.drawable import Drawable
 
 import pygame
+import threading
 
 
 class MainController(Observer, Waiter):
@@ -26,6 +30,15 @@ class MainController(Observer, Waiter):
         # Save event_controller to use later
         self.event_controller = event_controller
         self.env = env
+
+        #set some value for head
+        self.number_of_enemy = NUM_SPRITES.NUMBER_OF_ENEMY
+        self.time_to_create_new = DURATION.TIME_CREATE_NEW
+        self.max_of_current_enemy = NUM_SPRITES.MAX_OF_CURRENT_ENEMY
+        self.totalCreatedEnemy = 0
+
+        #set some info about hole
+        self.listHoles = [(300,300),(400,300)]
 
         # Constructor of base class
         Observer.__init__(self)
@@ -89,6 +102,30 @@ class MainController(Observer, Waiter):
         self.register(self.player, 'player_hammer')
         # Init list of heads
         # Define work of timer: choose random a head and show it
+
+        self.timer = threading.Timer(3, self.rebuildEnemy())
+
+    def rebuildEnemy(self):
+        if len(self.heads) < self.max_of_current_enemy and self.totalCreatedEnemy < self.number_of_enemy:
+            self.create_new_enemy((100,300))
+
+
+    def find_hole(self):
+       #find postion for new enemy
+        return
+
+
+    def init_enemy(self):
+        self.create_new_enemy((300,400))
+        self.create_new_enemy((250,300))
+
+
+    def create_new_enemy(self,pos):
+        enemy = Head(self,pos)
+        enemy.appear()
+        self.totalCreatedEnemy += 1
+        self.heads.append(enemy)
+
 
     def run(self):
         """
