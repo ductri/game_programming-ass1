@@ -20,7 +20,6 @@ class Head(Customer):
         self.dieIndex = 0
         self.timer = None
         self.alive = True
-        self.direction = 1
         self.setPos(pos)
 
         self.avatars = Factory.get_avatars('head_avatars')
