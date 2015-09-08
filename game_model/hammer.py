@@ -59,7 +59,9 @@ class Hammer(Customer, Observer):
 
         self.pos = (0,0)
 
-        self.size = (10,15)     # Height, Width
+        self.size = (10, 15)     # Height, Width
+
+        self.distance = (300, 300)
 
     def hit(self):
         """
@@ -90,10 +92,14 @@ class Hammer(Customer, Observer):
             self.register_waiter(key, self.drawable_avatar)
 
         if self.timer is None:
-            self.timer = Timer(0.01, work)
+            self.timer = Timer(0.1, work)
 
         if not self.hammering:
             self.timer.start()
+
+        rect = [self.pos[0] + 10, self.pos[1] + 230, 20, 20]
+
+        return rect
 
     def get_avatar(self):
             return self.drawable_avatar.bitmap
@@ -105,7 +111,7 @@ class Hammer(Customer, Observer):
         :return:
         """
         if type_key == 'player_motion' or type_key == 'player_hammer':
-            self.pos = data
+            self.pos = (data[0] - self.distance[0], data[1] - self.distance[1])
 
     def close(self):
         self.timer.close()

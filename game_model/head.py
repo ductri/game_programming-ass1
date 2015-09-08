@@ -49,8 +49,10 @@ class Head(Customer):
         self.height = h
 
     def appear(self, pos):
+
         self.avatarIndex = 0
         drawable_avatar = self.drawable_avatars[self.avatarIndex]
+
         self.register_waiter(CUSTOMER_KEY.HEAD, drawable_avatar)
 
         def doAnimation():
