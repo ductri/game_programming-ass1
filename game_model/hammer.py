@@ -8,7 +8,7 @@ from utils.timer.timer import Timer
 from utils.observer_pattern.observer import Observer
 from game_model.drawable import Drawable
 
-import threading
+import pygame
 
 
 # TODO clean code: set private attribute
@@ -97,7 +97,7 @@ class Hammer(Customer, Observer):
         if not self.hammering:
             self.timer.start()
 
-        rect = [self.pos[0] + 10, self.pos[1] + 230, 20, 20]
+        rect = pygame.Rect(self.pos[0] + 10, self.pos[1] + 230, 20, 20)
 
         return rect
 

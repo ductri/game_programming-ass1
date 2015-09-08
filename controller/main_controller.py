@@ -70,7 +70,6 @@ class MainController(Observer, Waiter):
             else:
                 self.player.decrease_score()
 
-
     def init_game(self):
         """
         Init logically game
@@ -104,7 +103,9 @@ class MainController(Observer, Waiter):
         Check collision between player and head
         :return:
         """
-
+        for head in self.heads:
+            if rect_bound_hammer.colliderect(head.get_rect_bound()):
+                return head
         return None
 
     def close(self):

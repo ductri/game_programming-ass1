@@ -5,10 +5,10 @@ from utils.constant.drawable_index import DRAWABLE_INDEX
 from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from utils.constant.NUM_SPRITES import NUM_SPRITES
 from utils.constant.DURATION import DURATION
-from utils.timer.timer import Timer
 from game_model.drawable import Drawable
 
 import threading
+import pygame
 
 class Head(Customer):
 
@@ -80,7 +80,6 @@ class Head(Customer):
         #need to implement later
         return False
 
-
     def die(self):
         self.dieIndex = 0
         drawable_avatar = self.drawable_die_avatars[self.dieIndex]
@@ -101,5 +100,8 @@ class Head(Customer):
         self.timer = threading.Timer(DURATION.HEAD, doAnimation())
         self.timer.start()
         return
+
+    def get_rect_bound(self):
+        return pygame.Rect(0,0,10,10)
 
 
