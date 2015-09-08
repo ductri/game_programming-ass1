@@ -104,7 +104,7 @@ class MainController(Observer, Waiter):
         Check collision between player and head
         :return:
         """
-        
+
         return None
 
     def close(self):

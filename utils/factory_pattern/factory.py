@@ -38,6 +38,12 @@ class Factory:
             for i in range(1, 2):
                 ava = pygame.image.load(url + str(i) + '.png')
                 avatars.append(ava)
+
+        elif name.lower() == 'head_die':
+            url = 'resources/head_avatar_die_'
+            for i in range(1, 2):
+                ava = pygame.image.load(url + str(i) + '.png')
+                avatars.append(ava)
         else:
             raise NotImplementedError
         return avatars
