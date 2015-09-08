@@ -14,5 +14,5 @@ class Subject:
     def set_change(self, type_key, data):
         self.__subject_units[type_key].notice_all(type_key, data)
 
-    def register(self, observer, type_key):
+    def register_service(self, observer, type_key):
         self.__subject_units[type_key].attach(observer)

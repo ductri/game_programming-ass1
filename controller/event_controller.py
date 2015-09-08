@@ -19,6 +19,9 @@ class EventController(Subject):
         key_down_subject_unit = SubjectUnit()
         self.add_subject_unit(key_down_subject_unit, 'special')
 
+        key_down_subject_unit = SubjectUnit()
+        self.add_subject_unit(key_down_subject_unit, 'mouse_motion')
+
     def run(self):
         """
         Need to re-code
@@ -34,7 +37,7 @@ class EventController(Subject):
                 continue
 
             if event.type == pygame.MOUSEMOTION:
-
+                self.set_change('mouse_motion', event)
                 continue
 
             # KEYBOARD

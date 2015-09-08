@@ -31,8 +31,8 @@ class Hammer(Customer, Observer):
 
         # Constructor of base class
         Customer.__init__(self, waiter)
-        Observer.__init__(self, subject)
-        self.register_subject()
+        Observer.__init__(self)
+        self.register(subject, 'player_motion')
 
         avatars = Factory.get_avatars('hammer_avatars')
         if avatars is None:
@@ -98,14 +98,14 @@ class Hammer(Customer, Observer):
     def get_avatar(self):
             return self.drawable_avatar.bitmap
 
-    def update(self, pos):
+    def update(self, type_key, data):
         """
         Override function of base class: Observer
         :param event:
         :return:
         """
-
-        self.pos = pos
+        if type_key == 'player_motion' or type_key == 'player_hammer':
+            self.pos = data
 
     def close(self):
         self.timer.close()
