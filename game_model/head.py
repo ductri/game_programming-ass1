@@ -26,7 +26,7 @@ class Head(Customer):
         return
 
     def appear(self, pos):
-        drawable_avatar = Drawable(self.drawable_avatars[0],pos,DRAWABLE_INDEX.HEAD)
+        drawable_avatar = Drawable(self.drawable_avatars[0], pos, DRAWABLE_INDEX.HEAD)
         self.register_waiter(CUSTOMER_KEY.HEAD, drawable_avatar)
 
         def disappear():

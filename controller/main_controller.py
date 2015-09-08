@@ -32,12 +32,16 @@ class MainController(Observer, Waiter):
         # Register to receive some special events
         self.register(event_controller, 'special')
 
+
         Waiter.__init__(self)
 
         # Attribute declare
         self.quit_game = False
         self.player = None
+
+
         self.drawable_components = []
+        self.heads = []
 
         # Init pygame
         pygame.init()
@@ -52,10 +56,20 @@ class MainController(Observer, Waiter):
         :param event: event is happened
         :return: None
         """
-        if type_key == 'quit':
+        if type_key == 'special':
             if event.type == pygame.QUIT:
                 self.close()
                 self.quit_game = True
+        elif type_key == 'player_hammer':
+            print 'play hammering: ' + str(event)
+            rect_bound_hammer = event
+            head = self.__check_collision(rect_bound_hammer)
+            if head:
+                self.player.increase_score()
+                head.die()
+            else:
+                self.player.decrease_score()
+
 
     def init_game(self):
         """
@@ -71,7 +85,10 @@ class MainController(Observer, Waiter):
         else:
             raise 'Can not load background image'
 
-        self.player = Player(self.event_controller, self)
+        self.player = Player(self.event_controller, self, self.screen)
+        self.register(self.player, 'player_hammer')
+        # Init list of heads
+        # Define work of timer: choose random a head and show it
 
     def run(self):
         """
@@ -81,6 +98,14 @@ class MainController(Observer, Waiter):
         self.screen.fill((255, 255, 255))
         for key in sorted(self.objects.keys()):     # TODO: Need to improve
             self.screen.blit(self.objects[key].bitmap, self.objects[key].pos)
+
+    def __check_collision(self, rect_bound_hammer):
+        """
+        Check collision between player and head
+        :return:
+        """
+        
+        return None
 
     def close(self):
         self.player.close()

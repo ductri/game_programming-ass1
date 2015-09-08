@@ -14,7 +14,7 @@ class Factory:
         return
 
     def get_background():
-        return pygame.image.load('resources/background.jpg')
+        return pygame.image.load('resources/background.png')
 
     # Make static function
     get_background = staticmethod(get_background)
@@ -26,8 +26,15 @@ class Factory:
             for i in range(1, 6):
                 ava = pygame.image.load(url + str(i) + '.png')
                 avatars.append(ava)
+
         elif name.lower() == 'head_avatars':
             url = 'resources/head_avatar_'
+            for i in range(1, 2):
+                ava = pygame.image.load(url + str(i) + '.png')
+                avatars.append(ava)
+
+        elif name.lower() == 'blank':
+            url = 'resources/blank_'
             for i in range(1, 2):
                 ava = pygame.image.load(url + str(i) + '.png')
                 avatars.append(ava)

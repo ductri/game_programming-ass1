@@ -6,6 +6,7 @@ from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from utils.constant.drawable_index import DRAWABLE_INDEX
 from utils.observer_pattern.subject import Subject
 from utils.observer_pattern.subject_unit import SubjectUnit
+from utils.factory_pattern.factory import Factory
 from game_model.hammer import Hammer
 from game_model.drawable import Drawable
 
@@ -16,7 +17,8 @@ Consider combine with hammer.py into 1 module
 """
 class Player(Observer, Customer, Subject):
 
-    def __init__(self, event_controller, waiter):
+    def __init__(self, event_controller, waiter, screen):
+        self.screen = screen
 
         # Constructor of base class: Observer
         Observer.__init__(self)
@@ -33,16 +35,12 @@ class Player(Observer, Customer, Subject):
 
         Customer.__init__(self, waiter)
 
-        # Observer to update position of player
-        self.__pos_observers = []
-
-        # Observer to update where and when player hammers
-        self.__hammering_observers = []
 
         # Attributes
 
         # hammer
         self.hammer = Hammer(waiter, self)
+        self.score = 0
 
     def update(self, type_key, event):
         """
@@ -52,17 +50,21 @@ class Player(Observer, Customer, Subject):
         """
         if type_key == 'mouse_down':
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self.hammer.hit()
-                rect_bound = (event.pos[0], event.pos[1], self.hammer.size[0], self.hammer.size[1])
-                self.set_change('player_hammer', event.pos)
-                #for observer in self.__hammering_observers:
-                #    rect_bound = (event.pos[0], event.pos[1], self.hammer.size[0], self.hammer.size[1])
-                #    observer.update(rect_bound)
+                rect = self.hammer.hit()
+
+                blank = Factory.get_avatars('blank')
+                drawable_object1 = Drawable(blank[0], (rect[0], rect[1]), 2)
+                self.register_waiter('blank1', drawable_object1)
+                drawable_object2 = Drawable(blank[0], (rect[0] + rect[2],rect[1] + rect[3]), 2)
+                self.register_waiter('blank2', drawable_object2)
+
+                self.set_change('player_hammer', rect)
 
         elif type_key == 'mouse_motion':
             if event.type == pygame.MOUSEMOTION:
                 # Just draw the one avatar in list avatars of hammer
-                drawable_object = Drawable(self.hammer.get_avatar(), event.pos, DRAWABLE_INDEX.PLAYER)
+                pos = (event.pos[0] - self.hammer.distance[0], event.pos[1] - self.hammer.distance[1])
+                drawable_object = Drawable(self.hammer.get_avatar(), pos, DRAWABLE_INDEX.PLAYER)
 
                 # Insert index as prefix keyword to sort
                 key = str(drawable_object.index) + CUSTOMER_KEY.HAMMER
@@ -72,11 +74,11 @@ class Player(Observer, Customer, Subject):
                 # Update state for all observers want to know position of player
                 self.set_change('player_motion', event.pos)
 
-    def register_subject(self, observer):
-        self.__pos_observers.append(observer)
+    def increase_score(self):
+        self.score += 10
 
-    def register_pos_hammering_subject(self, observer):
-        self.__hammering_observers.append(observer)
+    def decrease_score(self):
+        self.score -= 10
 
     def close(self):
         self.hammer.close()

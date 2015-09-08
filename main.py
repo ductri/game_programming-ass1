@@ -26,4 +26,6 @@ while not main_controller.quit_game:
     # Approximately 60fps
     clock.tick(60)
 
+
+
 pygame.quit()
