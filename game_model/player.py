@@ -75,11 +75,9 @@ class Player(Observer, Customer, Subject):
 
     def increase_score(self):
         self.score += 10
-        print 'score = ' + str(self.score)
 
     def decrease_score(self):
-        self.score -= 10
-        print 'score = ' + str(self.score)
+        return
 
     def close(self):
         self.hammer.close()

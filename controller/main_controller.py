@@ -77,6 +77,7 @@ class MainController(Observer, Waiter):
         self.timer_counter = None
         self.stage = None
         self.id = 0
+        self.finish = False
 
     def update(self, type_key, event):
         """
@@ -102,8 +103,8 @@ class MainController(Observer, Waiter):
             else:
                 self.player.decrease_score()
         elif type_key == 'time_up':
-            self.close()
-            self.quit_game = True
+            self.finish = True
+            self.finish_game()
 
     def init_game(self):
         """
@@ -114,7 +115,7 @@ class MainController(Observer, Waiter):
         self.screen.fill((255, 255, 255))
         background = Factory.get_background()
         if background is not None:
-            drawable_object = Drawable(background, (0, 0), DRAWABLE_INDEX.BACKGROUND)
+            drawable_object = Drawable(background, (0, 20), DRAWABLE_INDEX.BACKGROUND)
             key = str(drawable_object.index) + CUSTOMER_KEY.BACKGROUND      # Insert index as prefix keyword to sort
             self.register_waiter(key, drawable_object)
         else:
@@ -140,9 +141,11 @@ class MainController(Observer, Waiter):
             for i in range(num_head):
                 self.interval_head = random.random() * 0.1 + 0.2
 
-                self.appear_delay = random.random() * 1.5
-
                 self.stick_time = random.random() * 0.05 + 0.05
+
+                self.appear_delay = random.random() * 1.5
+                if self.appear_delay < 6 * self.stick_time + 0.01:
+                    self.appear_delay = 6 * self.stick_time + 0.01
 
                 # Position of top left corner of bitmap
                 original_head_pos = HolePosition.POS[positions[i]]
@@ -162,8 +165,8 @@ class MainController(Observer, Waiter):
 
         self.head_timer.start()
 
-        self.timer_counter = TimerCounter(self, 30, 100, (650, 40), (9, 123, 34))
-        self.register( self.timer_counter, 'time_up')
+        self.timer_counter = TimerCounter(self, 60, 50, (570, 400), (240, 5, 12))
+        self.register(self.timer_counter, 'time_up')
         self.timer_counter.run()
 
     def run(self):
@@ -171,13 +174,14 @@ class MainController(Observer, Waiter):
         Implement from Waiter. This function clear and then draw whole screen.
         :return: None
         """
-        self.screen.fill((2, 0, 32))
-        for key in sorted(self.objects.keys()):     # TODO: Need to improve
-            if key in self.objects.keys():
-                try:
-                    self.screen.blit(self.objects[key].bitmap, self.objects[key].pos)
-                except KeyError:
-                    continue
+        if not self.finish:
+            self.screen.fill((0, 0, 0))
+            for key in sorted(self.objects.keys()):     # TODO: Need to improve
+                if key in self.objects.keys():
+                    try:
+                        self.screen.blit(self.objects[key].bitmap, self.objects[key].pos)
+                    except KeyError:
+                        continue
 
     def __check_collision(self, rect_bound_hammer):
         """
@@ -209,7 +213,6 @@ class MainController(Observer, Waiter):
         if self.timer_counter is not None:
             self.timer_counter.close()
 
-
     def intro(self, clock):
         logo = pygame.image.load('resources/Logo.png')
         i = 0
@@ -240,13 +243,18 @@ class MainController(Observer, Waiter):
         self.prepare_timer = Timer(0.001, work)
         self.prepare_timer.start()
 
-    # finish game :
-    #   end_background = pygame.image.load('resources/endgame.jpg')
-    #   self.screen.blit(end_background, (0, 0))
-    #   Font = pygame.font.Font("resources/HorrorFont.ttf",64)
-    #   self.screen.blit(Font.render('Your score: ',True,(255,0,0)), (160, 100))
-    #   pygame.display.flip()
-    #   time.sleep(5)
+    def finish_game(self):
+        self.close()
+        self.screen.fill((0, 0, 0))
+        end_background = pygame.image.load('resources/endgame.jpg')
+        self.screen.blit(end_background, (20, 10))
+        Font = pygame.font.Font("resources/HorrorFont.ttf", 64)
+        self.screen.blit(Font.render('Your score:', True, (255, 0, 0)), (130, 100))
+        self.screen.blit(Font.render(str(self.player.score), True, (255, 0, 0)), (300, 200))
+        pygame.display.flip()
+        time.sleep(10)
+
+        self.quit_game = True
 
     # play again
     #         Font = pygame.font.Font("resources/restart.ttf",32)
