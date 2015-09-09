@@ -85,11 +85,6 @@ class Hammer(Customer, Observer):
             avatar_index = 4 - abs(self.index - 4)
             self.drawable_avatar = self.drawable_avatars[avatar_index]
             self.drawable_avatar.pos = self.pos
-<<<<<<< HEAD
-            print self.index
-            print self.index
-=======
->>>>>>> 9f0393732fbcd8e5ab0e2c6690d0b6954155268e
 
             # Insert index as prefix keyword to sort
             key = str(self.drawable_avatar.index) + CUSTOMER_KEY.HAMMER

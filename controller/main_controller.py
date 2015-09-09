@@ -147,7 +147,9 @@ class MainController(Observer, Waiter):
 
     def close(self):
         self.player.close()
-
+        if self.head_timer is not None:
+            self.head_timer.stop()
+            self.head_timer.close()
     def intro(self, clock):
 
         logo = pygame.image.load('resources/Logo.png')
@@ -162,11 +164,5 @@ class MainController(Observer, Waiter):
             pygame.display.flip()
             clock.tick(10)
 
-=======
-        for head in self.heads:
-            head.close()
 
-        if self.head_timer is not None:
-            self.head_timer.stop()
-            self.head_timer.close()
->>>>>>> 9f0393732fbcd8e5ab0e2c6690d0b6954155268e
+
