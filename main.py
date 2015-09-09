@@ -9,7 +9,7 @@ env_controller = EnvController()
 event_controller = EventController()
 main_controller = MainController(event_controller, env_controller)
 
-main_controller.init_game()
+
 
 # Control fps
 clock = pygame.time.Clock()
@@ -23,6 +23,8 @@ while time.time() - start_time < 11:
 
 background_music = pygame.mixer.Sound('resources/Haunted.ogg')
 background_music.play()
+
+main_controller.init_game()
 # Game loop
 while not main_controller.quit_game:
     # Listen events
@@ -35,7 +37,5 @@ while not main_controller.quit_game:
 
     # Approximately 60fps
     clock.tick(60)
-
-
 
 pygame.quit()
