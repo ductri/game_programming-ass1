@@ -4,6 +4,8 @@ import pygame
 from utils.observer_pattern.subject import Subject
 from utils.observer_pattern.subject_unit import SubjectUnit
 
+import datetime
+
 class EventController(Subject):
 
     def __init__(self):

@@ -77,4 +77,9 @@ class Factory:
         elif name.lower() == 'head_appear':
             return pygame.mixer.Sound('resources/am thanh cua naruto xuat hien/SNDDATA_0101.wav')
 
+        elif name.lower() == 'prepare4battle':
+            return pygame.mixer.Sound('resources/dota2_sound/prepare4battle.ogg')
+        elif name.lower() == 'first_blood':
+            return pygame.mixer.Sound('resources/dota2_sound/first_blood.ogg')
+
     get_sound = staticmethod(get_sound)

@@ -12,9 +12,11 @@ from utils.constant.hole_position import HolePosition
 from game_model.head import Head
 from game_model.player import Player
 from game_model.drawable import Drawable
+from game_model.timer_counter import TimerCounter
 
 import pygame
 import time
+import random
 
 
 class MainController(Observer, Waiter):
@@ -28,6 +30,10 @@ class MainController(Observer, Waiter):
     """
 
     def __init__(self, event_controller, env):
+
+        # Init pygame
+        pygame.init()
+        pygame.mixer.init()
 
         # Save event_controller to use later
         self.event_controller = event_controller
@@ -50,18 +56,27 @@ class MainController(Observer, Waiter):
         self.quit_game = False
         self.player = None
 
-        #self.drawable_components = []
         self.heads = []
         self.head_timer = None
-        self.interval_head_appear = 3
+        self.interval_section = 3
         self.appear_delay = 3
         self.stick_time = 0.12
+        self.is_first_blood = True
 
-        # Init pygame
-        pygame.init()
-        pygame.mixer.init()
+        self.sound_prepare4battle = Factory.get_sound('prepare4battle')
+        if self.sound_prepare4battle is None:
+            raise NotImplementedError
+        self.sound_prepare4battle_playing = False
+        self.sound_first_blood = Factory.get_sound('first_blood')
+        if self.sound_first_blood is None:
+            raise NotImplementedError
+
         self.screen = pygame.display.set_mode(self.env.screen_size)
         pygame.mouse.set_visible(False)    # Hide default mouse cursor
+
+        self.timer_counter = None
+        self.stage = None
+        self.id = 0
 
     def update(self, type_key, event):
         """
@@ -79,13 +94,18 @@ class MainController(Observer, Waiter):
             head = self.__check_collision(rect_bound_hammer)
 
             if head:
-                print 'hit'
                 self.player.increase_score()
                 head.die()
+                if self.is_first_blood:
+                    self.sound_first_blood.play()
+                    self.is_first_blood = False
             else:
                 self.player.decrease_score()
+        elif type_key == 'time_up':
+            self.close()
+            self.quit_game = True
 
-    def init_game(self, start_time):
+    def init_game(self):
         """
         Init logically game
         :return: None
@@ -99,60 +119,64 @@ class MainController(Observer, Waiter):
         else:
             raise 'Can not load background image'
 
-        self.player = Player(self.event_controller, self, self.screen)
+        self.player = Player(self.event_controller, self)
         self.register(self.player, 'player_hammer')
 
-        self.pos_index = 0
-
+    def start_game(self):
         self.id = 0
 
         # Define work of timer: choose random a head and show it
         def work():
-            current_time = time.time()
-            if current_time - start_time <= 4:
-                return
-            if self.pos_index > len(HolePosition.POS) - 2:
-                self.pos_index = 0
-            i = 0
-            
-            self.id += 1
-            self.pos_index += 1
-            self.original_head_pos = HolePosition.POS[self.pos_index]
-            head = Head(str(self.id), self, self.stick_time)
-            pos = (self.original_head_pos[0] - 30, self.original_head_pos[1] - 40)
-            head.show(pos, self.appear_delay)
+            # current_time = time.time()
+            # if current_time - start_time <= 4:
+            #     return
+            num_head = random.randint(1, 5)
+            positions = range(8)
+            random.shuffle(positions)
 
-            self.appear_delay -= 0.3
-            if self.appear_delay < 0.3:
-                self.appear_delay = 0.3
+            self.interval_section = random.random() * 2 + 0.5
 
+            for i in range(num_head):
+                self.interval_head = random.random() * 0.1 + 0.2
 
-            self.interval_head_appear -= 0.3
-            if self.interval_head_appear < 0.3:
-                self.interval_head_appear = 0.3
+                self.appear_delay = random.random() * 1.5
 
-            self.stick_time -= 0.1
+                self.stick_time = random.random() * 0.05 + 0.05
 
-            if self.stick_time < 0.05:
-                self.stick_time = 0.05
+                # Position of top left corner of bitmap
+                original_head_pos = HolePosition.POS[positions[i]]
+                head = Head(str(self.id), self, self.stick_time)
 
-            self.heads.append(head)
+                # Actually position
+                pos = (original_head_pos[0] - 30, original_head_pos[1] - 40)
 
-        self.head_timer = Timer(self.interval_head_appear, work)
+                head.show(pos, self.appear_delay)
+
+                self.heads.append(head)
+                self.id += 1
+                time.sleep(self.interval_head)
+        # Finish work() function
+
+        self.head_timer = Timer(self.interval_section, work)
         self.head_timer.start()
 
-    def run(self, start_time):
+        self.timer_counter = TimerCounter(self, 30, 100, (650, 40), (9, 123, 34))
+        self.register( self.timer_counter, 'time_up')
+        self.timer_counter.run()
+
+    def run(self):
         """
         Implement from Waiter. This function clear and then draw whole screen.
         :return: None
         """
-        current_time = time.time()
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((2, 0, 32))
         for key in sorted(self.objects.keys()):     # TODO: Need to improve
-            self.screen.blit(self.objects[key].bitmap, self.objects[key].pos)
-        if current_time - start_time <= 4:
-            Font = pygame.font.Font("resources/font.ttf",128)
-            self.screen.blit(Font.render(str(int(4 - current_time + start_time)),True,(255,0,0)), (280, 200))
+            if key in self.objects.keys():
+                try:
+                    self.screen.blit(self.objects[key].bitmap, self.objects[key].pos)
+                except KeyError:
+                    continue
+
     def __check_collision(self, rect_bound_hammer):
         """
         Check collision between player and head
@@ -164,9 +188,9 @@ class MainController(Observer, Waiter):
                 heads.append(head)
                 if rect_bound_hammer.colliderect(head.get_rect_bound()):
                     return head
-
-
-            self.heads = heads
+            # if head.showing:
+            #     heads.append(head)
+            # self.heads = heads
         return None
 
     def close(self):
@@ -175,6 +199,8 @@ class MainController(Observer, Waiter):
             head.close()
         if self.head_timer is not None:
             self.head_timer.close()
+        if self.timer_counter is not None:
+            self.timer_counter.close()
 
     def intro(self, clock):
         logo = pygame.image.load('resources/Logo.png')
@@ -188,3 +214,18 @@ class MainController(Observer, Waiter):
             self.screen.blit(logo, (480 - i * 2, 30))
             pygame.display.flip()
             clock.tick(10)
+
+    def prepare(self):
+        self.stage = 'prepare'
+
+        def work():
+            if not self.sound_prepare4battle_playing:
+                self.sound_prepare4battle.play()
+                self.sound_prepare4battle_playing = True
+            else:
+                time.sleep(4)
+                self.prepare_timer.stop()
+                self.start_game()
+
+        self.prepare_timer = Timer(0.001, work)
+        self.prepare_timer.start()

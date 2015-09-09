@@ -81,6 +81,8 @@ class Head(Customer):
 
     def appear(self, pos):
         self.showing = True
+        self.alive = True
+
         self.rect_bound = pygame.Rect(pos[0] + 15, pos[1] + 15, self.size[0], self.size[1])
 
         # Update position to draw on screen
@@ -114,12 +116,12 @@ class Head(Customer):
             # Insert index as prefix keyword to sort
             self.register_waiter(key, drawable_object)
 
-            blank = Factory.get_avatars('blank')
-            drawable_object1 = Drawable(blank[0], (self.get_rect_bound()[0], self.get_rect_bound()[1]), 2)
-            self.register_waiter('blank1', drawable_object1)
-            drawable_object2 = Drawable(blank[0], (self.get_rect_bound()[0] + self.get_rect_bound()[2],
-                                                   self.get_rect_bound()[1] + self.get_rect_bound()[3]), 2)
-            self.register_waiter('blank2', drawable_object2)
+            # blank = Factory.get_avatars('blank')
+            # drawable_object1 = Drawable(blank[0], (self.get_rect_bound()[0], self.get_rect_bound()[1]), 2)
+            # self.register_waiter('blank1', drawable_object1)
+            # drawable_object2 = Drawable(blank[0], (self.get_rect_bound()[0] + self.get_rect_bound()[2],
+            #                                        self.get_rect_bound()[1] + self.get_rect_bound()[3]), 2)
+            # self.register_waiter('blank2', drawable_object2)
 
         if self.appear_timer is None:
             self.appear_timer = Timer(self.stick_time, do_animation)
@@ -129,6 +131,7 @@ class Head(Customer):
 
     def disappear(self):
         self.alive = False
+
         drawable_object = self.disappear_drawable_avatars[self.disappear_index]
         # Start drawing
         self.register_waiter(str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name, drawable_object)
@@ -136,13 +139,14 @@ class Head(Customer):
         def do_animation():
             self.disappear_index += 1
             if self.disappear_index > (self.disappear_drawable_avatars.__len__() - 1):
+                # Disappear actually from screen
+                key = str(self.disappear_drawable_avatars[0].index) + CUSTOMER_KEY.HEAD + self.name
+                self.unregister_waiter(key)
+
                 self.disappear_index = 0
                 self.showing = False
                 self.disappear_timer.stop()
 
-                # Disappear actually from screen
-                key = str(self.disappear_drawable_avatars[0].index) + CUSTOMER_KEY.HEAD + self.name
-                self.unregister_waiter(key)
                 # Close all timer
                 self.close()
 
@@ -165,9 +169,11 @@ class Head(Customer):
         def work():
             end = datetime.datetime.now()
             if (end - start).total_seconds() > duration:
+                if self.stand_timer is not None:
+                    self.stand_timer.stop()
+                if self.main_timer is not None:
+                    self.main_timer.stop()
                 self.disappear()
-                self.main_timer.stop()
-                self.stand_timer.stop()
         self.main_timer = Timer(0.1, work)
         self.main_timer.start()
 
@@ -188,7 +194,6 @@ class Head(Customer):
 
         if self.stand_timer is None:
             self.stand_timer = Timer(self.stick_time, do_animation)
-            print 'stick_time = ' + str(self.stick_time)
 
         self.stand_timer.start()
 
@@ -205,6 +210,7 @@ class Head(Customer):
                 self.die_timer.stop()
                 self.disappear()
                 return
+
             drawable_object = self.die_drawable_avatars[self.die_index]
             key = str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name
             # Insert index as prefix keyword to sort
@@ -213,9 +219,12 @@ class Head(Customer):
         if self.die_timer is None:
             self.die_timer = Timer(0.1, do_animation)
 
-        self.appear_timer.stop()
-        self.stand_timer.stop()
-        self.main_timer.stop()
+        if self.appear_timer is not None:
+            self.appear_timer.stop()
+        if self.stand_timer is not None:
+            self.stand_timer.stop()
+        if self.main_timer is not None:
+            self.main_timer.stop()
 
         self.die_timer.start()
         self.sound_head_hit.play()
@@ -225,7 +234,6 @@ class Head(Customer):
 
     def set_stick_time(self, stick_time):
         self.stick_time = stick_time
-        print 'set stick_time = ' + str(stick_time)
 
     def close(self):
         if self.appear_timer is not None:
@@ -242,5 +250,3 @@ class Head(Customer):
 
         if self.main_timer is not None:
             self.main_timer.close()
-
-

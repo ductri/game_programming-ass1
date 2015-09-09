@@ -17,8 +17,7 @@ Consider combine with hammer.py into 1 module
 """
 class Player(Observer, Customer, Subject):
 
-    def __init__(self, event_controller, waiter, screen):
-        self.screen = screen
+    def __init__(self, event_controller, waiter):
 
         # Constructor of base class: Observer
         Observer.__init__(self)
@@ -52,11 +51,11 @@ class Player(Observer, Customer, Subject):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 rect = self.hammer.hit()
 
-                blank = Factory.get_avatars('blank')
-                drawable_object1 = Drawable(blank[0], (rect[0], rect[1]), 2)
-                self.register_waiter('blank1', drawable_object1)
-                drawable_object2 = Drawable(blank[0], (rect[0] + rect[2],rect[1] + rect[3]), 2)
-                self.register_waiter('blank2', drawable_object2)
+                # blank = Factory.get_avatars('blank')
+                # drawable_object1 = Drawable(blank[0], (rect[0], rect[1]), 2)
+                # self.register_waiter('blank1', drawable_object1)
+                # drawable_object2 = Drawable(blank[0], (rect[0] + rect[2],rect[1] + rect[3]), 2)
+                # self.register_waiter('blank2', drawable_object2)
 
                 self.set_change('player_hammer', rect)
 
