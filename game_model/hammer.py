@@ -57,11 +57,11 @@ class Hammer(Customer, Observer):
 
         self.timer = None
 
-        self.pos = (0,0)
+        self.pos = (0, 0)
 
         self.size = (10, 15)     # Height, Width
 
-        self.distance = (300, 300)
+        self.distance = (150, 150)
 
     def hit(self):
         """
@@ -96,7 +96,7 @@ class Hammer(Customer, Observer):
         if not self.hammering:
             self.timer.start()
 
-        rect = pygame.Rect(self.pos[0] + 10, self.pos[1] + 230, 40, 40)
+        rect = pygame.Rect(self.pos[0] + 10, self.pos[1] + 130, 30, 30)
 
         return rect
 

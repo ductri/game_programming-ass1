@@ -3,8 +3,6 @@ from utils.customer_waiter_pattern.customer import Customer
 from utils.factory_pattern.factory import Factory
 from utils.constant.drawable_index import DRAWABLE_INDEX
 from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
-from utils.constant.NUM_SPRITES import NUM_SPRITES
-from utils.constant.DURATION import DURATION
 from utils.timer.timer import Timer
 from game_model.drawable import Drawable
 
@@ -14,7 +12,7 @@ import pygame
 
 class Head(Customer):
 
-    def __init__(self, name, waiter):
+    def __init__(self, name, waiter, stick_time):
 
         Customer.__init__(self, waiter)
 
@@ -34,7 +32,7 @@ class Head(Customer):
         self.alive = True
         self.showing = False
 
-        self.size = (60, 60)
+        self.size = (40, 40)
         self.rect_bound = pygame.Rect(0, 0, self.size[0], self.size[1])
 
         appear_avatars = Factory.get_avatars('head_appear_avatars')
@@ -73,11 +71,13 @@ class Head(Customer):
             drawable_item = Drawable(avatar, pos, DRAWABLE_INDEX.HEAD)
             self.stand_drawable_avatars.append(drawable_item)
 
+        self.stick_time = stick_time
+
         return
 
     def appear(self, pos):
         self.showing = True
-        self.rect_bound = pygame.Rect(pos[0], pos[1], self.size[0], self.size[1])
+        self.rect_bound = pygame.Rect(pos[0] + 15, pos[1] + 15, self.size[0], self.size[1])
 
         # Update position to draw on screen
         for drawable_avatar in self.appear_drawable_avatars:
@@ -110,8 +110,15 @@ class Head(Customer):
             # Insert index as prefix keyword to sort
             self.register_waiter(key, drawable_object)
 
+            blank = Factory.get_avatars('blank')
+            drawable_object1 = Drawable(blank[0], (self.get_rect_bound()[0], self.get_rect_bound()[1]), 2)
+            self.register_waiter('blank1', drawable_object1)
+            drawable_object2 = Drawable(blank[0], (self.get_rect_bound()[0] + self.get_rect_bound()[2],
+                                                   self.get_rect_bound()[1] + self.get_rect_bound()[3]), 2)
+            self.register_waiter('blank2', drawable_object2)
+
         if self.appear_timer is None:
-            self.appear_timer = Timer(0.15, do_animation)
+            self.appear_timer = Timer(self.stick_time, do_animation)
 
         self.appear_timer.start()
 
@@ -131,6 +138,8 @@ class Head(Customer):
                 # Disappear actually from screen
                 key = str(self.disappear_drawable_avatars[0].index) + CUSTOMER_KEY.HEAD + self.name
                 self.unregister_waiter(key)
+                # Close all timer
+                self.close()
 
                 return
             drawable_object = self.disappear_drawable_avatars[self.disappear_index]
@@ -139,7 +148,7 @@ class Head(Customer):
             self.register_waiter(key, drawable_object)
 
         if self.disappear_timer is None:
-            self.disappear_timer = Timer(0.15, do_animation)
+            self.disappear_timer = Timer(self.stick_time, do_animation)
 
         self.disappear_timer.start()
 
@@ -172,7 +181,8 @@ class Head(Customer):
             self.register_waiter(key, drawable_object)
 
         if self.stand_timer is None:
-            self.stand_timer = Timer(0.15, do_animation)
+            self.stand_timer = Timer(self.stick_time, do_animation)
+            print 'stick_time = ' + str(self.stick_time)
 
         self.stand_timer.start()
 
@@ -195,12 +205,20 @@ class Head(Customer):
             self.register_waiter(key, drawable_object)
 
         if self.die_timer is None:
-            self.die_timer = Timer(0.5, do_animation)
+            self.die_timer = Timer(0.1, do_animation)
+
+        self.appear_timer.stop()
+        self.stand_timer.stop()
+        self.main_timer.stop()
 
         self.die_timer.start()
 
     def get_rect_bound(self):
         return self.rect_bound
+
+    def set_stick_time(self, stick_time):
+        self.stick_time = stick_time
+        print 'set stick_time = ' + str(stick_time)
 
     def close(self):
         if self.appear_timer is not None:
