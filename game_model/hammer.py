@@ -8,7 +8,7 @@ from utils.timer.timer import Timer
 from utils.observer_pattern.observer import Observer
 from game_model.drawable import Drawable
 
-import threading
+import pygame
 
 
 # TODO clean code: set private attribute
@@ -59,7 +59,9 @@ class Hammer(Customer, Observer):
 
         self.pos = (0,0)
 
-        self.size = (10,15)     # Height, Width
+        self.size = (10, 15)     # Height, Width
+
+        self.distance = (300, 300)
 
     def hit(self):
         """
@@ -83,8 +85,11 @@ class Hammer(Customer, Observer):
             avatar_index = 4 - abs(self.index - 4)
             self.drawable_avatar = self.drawable_avatars[avatar_index]
             self.drawable_avatar.pos = self.pos
+<<<<<<< HEAD
             print self.index
             print self.index
+=======
+>>>>>>> 9f0393732fbcd8e5ab0e2c6690d0b6954155268e
 
             # Insert index as prefix keyword to sort
             key = str(self.drawable_avatar.index) + CUSTOMER_KEY.HAMMER
@@ -96,6 +101,10 @@ class Hammer(Customer, Observer):
         if not self.hammering:
             self.timer.start()
 
+        rect = pygame.Rect(self.pos[0] + 10, self.pos[1] + 230, 40, 40)
+
+        return rect
+
     def get_avatar(self):
             return self.drawable_avatar.bitmap
 
@@ -106,7 +115,8 @@ class Hammer(Customer, Observer):
         :return:
         """
         if type_key == 'player_motion' or type_key == 'player_hammer':
-            self.pos = data
+            self.pos = (data[0] - self.distance[0], data[1] - self.distance[1])
 
     def close(self):
-        self.timer.close()
+        if self.timer is not None:
+            self.timer.close()
