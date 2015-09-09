@@ -147,7 +147,6 @@ class MainController(Observer, Waiter):
 
     def close(self):
         self.player.close()
-<<<<<<< HEAD
 
     def intro(self, clock):
 
