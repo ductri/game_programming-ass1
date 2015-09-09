@@ -41,5 +41,9 @@ class Timer(threading.Thread):
     def stop(self):
         self.enable = False
 
+    def set_interval(self, interval):
+        self.time_stick = interval
+
     def close(self):
+        self.stop()
         self.timer_alive = False
