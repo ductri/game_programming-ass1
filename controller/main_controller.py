@@ -110,6 +110,7 @@ class MainController(Observer, Waiter):
         Init logically game
         :return: None
         """
+        start_time = time.time()
         self.screen.fill((255, 255, 255))
         background = Factory.get_background()
         if background is not None:
@@ -158,6 +159,7 @@ class MainController(Observer, Waiter):
         # Finish work() function
 
         self.head_timer = Timer(self.interval_section, work)
+
         self.head_timer.start()
 
         self.timer_counter = TimerCounter(self, 30, 100, (650, 40), (9, 123, 34))
@@ -195,12 +197,18 @@ class MainController(Observer, Waiter):
 
     def close(self):
         self.player.close()
+
+        if self.head_timer is not None:
+            self.head_timer.stop()
+            self.head_timer.close()
+
         for head in self.heads:
             head.close()
         if self.head_timer is not None:
             self.head_timer.close()
         if self.timer_counter is not None:
             self.timer_counter.close()
+
 
     def intro(self, clock):
         logo = pygame.image.load('resources/Logo.png')
@@ -212,6 +220,8 @@ class MainController(Observer, Waiter):
             self.screen.blit(img, (30, 150))
             self.screen.blit(logo, (i * 2, 30))
             self.screen.blit(logo, (480 - i * 2, 30))
+            Font = pygame.font.Font("resources/HorrorFont.ttf",64)
+            self.screen.blit(Font.render('PUNCH ZOMBIE ',True,(255,0,0)), (100, 100))
             pygame.display.flip()
             clock.tick(10)
 
@@ -229,3 +239,15 @@ class MainController(Observer, Waiter):
 
         self.prepare_timer = Timer(0.001, work)
         self.prepare_timer.start()
+
+    # finish game :
+    #   end_background = pygame.image.load('resources/endgame.jpg')
+    #   self.screen.blit(end_background, (0, 0))
+    #   Font = pygame.font.Font("resources/HorrorFont.ttf",64)
+    #   self.screen.blit(Font.render('Your score: ',True,(255,0,0)), (160, 100))
+    #   pygame.display.flip()
+    #   time.sleep(5)
+
+    # play again
+    #         Font = pygame.font.Font("resources/restart.ttf",32)
+    #    self.screen.blit(Font.render('Press R to play again ',True,(255,0,0)), (160, 100))
