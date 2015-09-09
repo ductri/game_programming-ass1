@@ -36,13 +36,10 @@ class Timer(threading.Thread):
                 time.sleep(self.time_stick)
 
     def start(self):
-        print "timer start"
         self.enable = True
 
     def stop(self):
-        print "timer stop"
         self.enable = False
 
     def close(self):
-        print 'timer is killed'
         self.timer_alive = False

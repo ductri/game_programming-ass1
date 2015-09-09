@@ -7,12 +7,13 @@ from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from utils.constant.drawable_index import DRAWABLE_INDEX
 from utils.constant.NUM_SPRITES import NUM_SPRITES
 from utils.constant.DURATION import DURATION
+from utils.timer.timer import Timer
+from utils.constant.hole_position import HolePosition
 from game_model.head import Head
 from game_model.player import Player
 from game_model.drawable import Drawable
 
 import pygame
-import threading
 
 
 class MainController(Observer, Waiter):
@@ -37,14 +38,10 @@ class MainController(Observer, Waiter):
         self.max_of_current_enemy = NUM_SPRITES.MAX_OF_CURRENT_ENEMY
         self.totalCreatedEnemy = 0
 
-        #set some info about hole
-        self.listHoles = [(300,300),(400,300)]
-
         # Constructor of base class
         Observer.__init__(self)
         # Register to receive some special events
         self.register(event_controller, 'special')
-
 
         Waiter.__init__(self)
 
@@ -52,9 +49,9 @@ class MainController(Observer, Waiter):
         self.quit_game = False
         self.player = None
 
-
-        self.drawable_components = []
+        #self.drawable_components = []
         self.heads = []
+        self.head_timer = None
 
         # Init pygame
         pygame.init()
@@ -74,7 +71,6 @@ class MainController(Observer, Waiter):
                 self.close()
                 self.quit_game = True
         elif type_key == 'player_hammer':
-            print 'play hammering: ' + str(event)
             rect_bound_hammer = event
             head = self.__check_collision(rect_bound_hammer)
             if head:
@@ -99,32 +95,35 @@ class MainController(Observer, Waiter):
 
         self.player = Player(self.event_controller, self, self.screen)
         self.register(self.player, 'player_hammer')
+
         # Init list of heads
+        head = Head('1', self)
+        self.heads.append(head)
+        head = Head('2', self)
+        self.heads.append(head)
+        head = Head('3', self)
+        self.heads.append(head)
+
+        #Draft
+        self.original_head_pos = (20, 200)
+
+        self.pos_index = 0
+
+        self.id = 0
         # Define work of timer: choose random a head and show it
+        def work():
+            if self.pos_index > 7:
+                self.pos_index = 0
+            i = 0
+            
+            self.id += 1
+            self.pos_index += 1
+            self.original_head_pos = HolePosition.POS[self.pos_index]
+            head = Head(str(self.id), self)
+            head.show(self.original_head_pos,3)
 
-        self.timer = threading.Timer(3, self.rebuildEnemy())
-
-    def rebuildEnemy(self):
-        if len(self.heads) < self.max_of_current_enemy and self.totalCreatedEnemy < self.number_of_enemy:
-            self.create_new_enemy((100,300))
-
-
-    def find_hole(self):
-       #find postion for new enemy
-        return
-
-
-    def init_enemy(self):
-        self.create_new_enemy((300,400))
-        self.create_new_enemy((250,300))
-
-
-    def create_new_enemy(self,pos):
-        enemy = Head(self,pos)
-        enemy.appear()
-        self.totalCreatedEnemy += 1
-        self.heads.append(enemy)
-
+        self.head_timer = Timer(3, work)
+        self.head_timer.start()
 
     def run(self):
         """
@@ -141,9 +140,16 @@ class MainController(Observer, Waiter):
         :return:
         """
         for head in self.heads:
-            if rect_bound_hammer.colliderect(head.get_rect_bound()):
-                return head
+            if head.alive and head.showing:
+                if rect_bound_hammer.colliderect(head.get_rect_bound()):
+                    return head
         return None
 
     def close(self):
         self.player.close()
+        for head in self.heads:
+            head.close()
+
+        if self.head_timer is not None:
+            self.head_timer.stop()
+            self.head_timer.close()

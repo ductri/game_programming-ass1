@@ -12,5 +12,5 @@ class Customer:
     def register_waiter(self, keyword, ob):
         self.waiter.register_waiter(keyword, ob)
 
-    def unregister_watier(self, keyword):
-        self.waiter.unregister_watier(keyword)
+    def unregister_waiter(self, keyword):
+        self.waiter.unregister_waiter(keyword)

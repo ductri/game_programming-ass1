@@ -85,19 +85,18 @@ class Hammer(Customer, Observer):
             avatar_index = 4 - abs(self.index - 4)
             self.drawable_avatar = self.drawable_avatars[avatar_index]
             self.drawable_avatar.pos = self.pos
-            print self.index
 
             # Insert index as prefix keyword to sort
             key = str(self.drawable_avatar.index) + CUSTOMER_KEY.HAMMER
             self.register_waiter(key, self.drawable_avatar)
 
         if self.timer is None:
-            self.timer = Timer(0.1, work)
+            self.timer = Timer(0.01, work)
 
         if not self.hammering:
             self.timer.start()
 
-        rect = pygame.Rect(self.pos[0] + 10, self.pos[1] + 230, 20, 20)
+        rect = pygame.Rect(self.pos[0] + 10, self.pos[1] + 230, 40, 40)
 
         return rect
 
@@ -114,4 +113,5 @@ class Hammer(Customer, Observer):
             self.pos = (data[0] - self.distance[0], data[1] - self.distance[1])
 
     def close(self):
-        self.timer.close()
+        if self.timer is not None:
+            self.timer.close()

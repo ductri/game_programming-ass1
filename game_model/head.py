@@ -5,104 +5,217 @@ from utils.constant.drawable_index import DRAWABLE_INDEX
 from utils.constant.customer_waiter_pattern.customer_key import CUSTOMER_KEY
 from utils.constant.NUM_SPRITES import NUM_SPRITES
 from utils.constant.DURATION import DURATION
+from utils.timer.timer import Timer
 from game_model.drawable import Drawable
 
-import threading
+import datetime
 import pygame
+
 
 class Head(Customer):
 
-    avatars = []
-    def __init__(self, waiter,pos):
+    def __init__(self, name, waiter):
 
-        Customer.__init__(waiter)
-        self.avatarIndex = 0
-        self.dieIndex = 0
-        self.timer = None
+        Customer.__init__(self, waiter)
+
+        self.name = name
+
+        self.appear_index = 0
+        self.die_index = 0
+        self.disappear_index = 0
+        self.stand_index = 0
+
+        self.appear_timer = None
+        self.die_timer = None
+        self.disappear_timer = None
+        self.stand_timer = None
+        self.main_timer = None
+
         self.alive = True
-        self.setPos(pos)
+        self.showing = False
 
-        self.avatars = Factory.get_avatars('head_avatars')
-        if self.avatars is None:
-            raise BaseException('Can not load avatar for hammer')
+        self.size = (60, 60)
+        self.rect_bound = pygame.Rect(0, 0, self.size[0], self.size[1])
 
-        self.drawable_avatars = []
-        for avatar in self.avatars:
-            drawable_item = Drawable(avatar, self.pos, DRAWABLE_INDEX.HEAD)
-            self.drawable_avatars.append(drawable_item)
+        appear_avatars = Factory.get_avatars('head_appear_avatars')
+        if appear_avatars is None:
+            raise BaseException('Can not load avatar for Head')
+        self.appear_drawable_avatars = []
+        for avatar in appear_avatars:
+            pos = (0, 0)
+            drawable_item = Drawable(avatar, pos, DRAWABLE_INDEX.HEAD)
+            self.appear_drawable_avatars.append(drawable_item)
 
-        self.die_avatar = Factory.get_avatars('head_avatars_die')
-        if self.die_avatars is None:
-                raise BaseException('Can not load avatar for die head')
+        die_avatars = Factory.get_avatars('head_die_avatars')
+        if die_avatars is None:
+            raise BaseException('Can not load avatar for Head')
+        self.die_drawable_avatars = []
+        for avatar in die_avatars:
+            pos = (0, 0)
+            drawable_item = Drawable(avatar, pos, DRAWABLE_INDEX.HEAD)
+            self.die_drawable_avatars.append(drawable_item)
 
-        self.drawable_die_avatars = []
-        for die_avatar in self.die_avatars:
-            item = Drawable(die_avatar,self.pos,DRAWABLE_INDEX.HEAD)
-            self.drawable_die_avatars.append(die_avatar)
+        disappear_avatars = Factory.get_avatars('head_disappear_avatars')
+        if disappear_avatars is None:
+            raise BaseException('Can not load avatar for Head')
+        self.disappear_drawable_avatars = []
+        for avatar in disappear_avatars:
+            pos = (0, 0)
+            drawable_item = Drawable(avatar, pos, DRAWABLE_INDEX.HEAD)
+            self.disappear_drawable_avatars.append(drawable_item)
+
+        stand_avatars = Factory.get_avatars('head_stand_avatars')
+        if disappear_avatars is None:
+            raise BaseException('Can not load avatar for Head')
+        self.stand_drawable_avatars = []
+        for avatar in stand_avatars:
+            pos = (0, 0)
+            drawable_item = Drawable(avatar, pos, DRAWABLE_INDEX.HEAD)
+            self.stand_drawable_avatars.append(drawable_item)
+
         return
 
-    def setPos(self,pos):
-        self.pos = pos
-    def getPos(self):
-        return self.Pos
-    def setWidth(self,w):
-        self.width = w
-    def setHeight(self,h):
-        self.height = h
+    def appear(self, pos):
+        self.showing = True
+        self.rect_bound = pygame.Rect(pos[0], pos[1], self.size[0], self.size[1])
 
-    def appear(self):
+        # Update position to draw on screen
+        for drawable_avatar in self.appear_drawable_avatars:
+            drawable_avatar.pos = pos
+        # Update position to draw on screen
+        for drawable_avatar in self.disappear_drawable_avatars:
+            drawable_avatar.pos = pos
+        # Update position to draw on screen
+        for drawable_avatar in self.die_drawable_avatars:
+            drawable_avatar.pos = pos
+        # Update position to draw on screen
+        for drawable_avatar in self.stand_drawable_avatars:
+            drawable_avatar.pos = pos
 
-        self.avatarIndex = 0
-        drawable_avatar = self.drawable_avatars[self.avatarIndex]
+        drawable_object = self.appear_drawable_avatars[self.appear_index]
+        # Start drawing
+        self.register_waiter(str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name, drawable_object)
 
-        self.register_waiter(CUSTOMER_KEY.HEAD, drawable_avatar)
+        def do_animation():
+            self.appear_index += 1
+            if self.appear_index > (self.appear_drawable_avatars.__len__() - 1):
+                self.appear_index = 0
+                self.appear_timer.stop()
 
-        def doAnimation():
-            if self.alive:
-                self.avatarIndex += 1
-                if(self.avatarIndex > NUM_SPRITES.HEAD ):
-                    self.avatarIndex = 0
-                    disappear()
-                    self.timer.stop()
-                drawable_avatar = self.drawable_avatars[self.avatarIndex]
-                # Insert index as prefix keyword to sort
-                self.register_waiter(CUSTOMER_KEY.HEAD, drawable_avatar)
-            else:
-                self.die()
+                # After appearing animation is standing animation
+                self.stand()
+                return
+            drawable_object = self.appear_drawable_avatars[self.appear_index]
+            key = str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name
+            # Insert index as prefix keyword to sort
+            self.register_waiter(key, drawable_object)
 
-        def disappear():
-            self.unregister_watier(CUSTOMER_KEY.HEAD)
-        if(self.timer == None):
-            self.timer = threading.Timer(DURATION.HEAD, doAnimation())
-        self.timer.start()
-        return
+        if self.appear_timer is None:
+            self.appear_timer = Timer(0.15, do_animation)
 
-    def check_collision(self,harmmer):
-        #need to implement later
-        return False
+        self.appear_timer.start()
+
+    def disappear(self):
+        self.alive = False
+        drawable_object = self.disappear_drawable_avatars[self.disappear_index]
+        # Start drawing
+        self.register_waiter(str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name, drawable_object)
+
+        def do_animation():
+            self.disappear_index += 1
+            if self.disappear_index > (self.disappear_drawable_avatars.__len__() - 1):
+                self.disappear_index = 0
+                self.showing = False
+                self.disappear_timer.stop()
+
+                # Disappear actually from screen
+                key = str(self.disappear_drawable_avatars[0].index) + CUSTOMER_KEY.HEAD + self.name
+                self.unregister_waiter(key)
+
+                return
+            drawable_object = self.disappear_drawable_avatars[self.disappear_index]
+            key = str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name
+            # Insert index as prefix keyword to sort
+            self.register_waiter(key, drawable_object)
+
+        if self.disappear_timer is None:
+            self.disappear_timer = Timer(0.15, do_animation)
+
+        self.disappear_timer.start()
+
+    def show(self, pos, duration):
+        self.appear(pos)
+        start = datetime.datetime.now()
+
+        def work():
+            end = datetime.datetime.now()
+            if (end - start).total_seconds() > duration:
+                self.disappear()
+                self.main_timer.stop()
+                self.stand_timer.stop()
+        self.main_timer = Timer(0.1, work)
+        self.main_timer.start()
+
+    def stand(self):
+        drawable_object = self.stand_drawable_avatars[self.stand_index]
+        # Start drawing
+        self.register_waiter(str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name, drawable_object)
+
+        def do_animation():
+            self.stand_index += 1
+            if self.stand_index > (self.stand_drawable_avatars.__len__() - 1):
+                self.stand_index = 0
+                return
+            drawable_object = self.stand_drawable_avatars[self.stand_index]
+            key = str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name
+            # Insert index as prefix keyword to sort
+            self.register_waiter(key, drawable_object)
+
+        if self.stand_timer is None:
+            self.stand_timer = Timer(0.15, do_animation)
+
+        self.stand_timer.start()
 
     def die(self):
-        self.dieIndex = 0
-        drawable_avatar = self.drawable_die_avatars[self.dieIndex]
-        self.register_waiter(CUSTOMER_KEY.HEAD, drawable_avatar)
+        self.alive = False
+        drawable_object = self.die_drawable_avatars[self.die_index]
+        # Start drawing
+        self.register_waiter(str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name, drawable_object)
 
-        def doAnimation():
-            self.avatarIndex += 1
-            if(self.avatarIndex > NUM_SPRITES.DIE_HEAD ):
-                self.avatarIndex = 0
-                disappear()
-                self.timer.stop()
-            drawable_avatar = self.drawable_avatars[self.avatarIndex]
+        def do_animation():
+            self.die_index += 1
+            if self.die_index > (self.die_drawable_avatars.__len__() - 1):
+                self.die_index = 0
+                self.die_timer.stop()
+                self.disappear()
+                return
+            drawable_object = self.die_drawable_avatars[self.die_index]
+            key = str(drawable_object.index) + CUSTOMER_KEY.HEAD + self.name
             # Insert index as prefix keyword to sort
-            self.register_waiter(CUSTOMER_KEY.HEAD, drawable_avatar)
+            self.register_waiter(key, drawable_object)
 
-        def disappear():
-            self.unregister_watier(CUSTOMER_KEY.HEAD)
-        self.timer = threading.Timer(DURATION.HEAD, doAnimation())
-        self.timer.start()
-        return
+        if self.die_timer is None:
+            self.die_timer = Timer(0.5, do_animation)
+
+        self.die_timer.start()
 
     def get_rect_bound(self):
-        return pygame.Rect(0,0,10,10)
+        return self.rect_bound
+
+    def close(self):
+        if self.appear_timer is not None:
+            self.appear_timer.close()
+
+        if self.die_timer is not None:
+            self.die_timer.close()
+
+        if self.disappear_timer is not None:
+            self.disappear_timer.close()
+
+        if self.stand_timer is not None:
+            self.stand_timer.close()
+
+        if self.main_timer is not None:
+            self.main_timer.close()
 
 
