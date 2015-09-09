@@ -85,11 +85,12 @@ class MainController(Observer, Waiter):
             else:
                 self.player.decrease_score()
 
-    def init_game(self, start_time):
+    def init_game(self):
         """
         Init logically game
         :return: None
         """
+        start_time = time.time()
         self.screen.fill((255, 255, 255))
         background = Factory.get_background()
         if background is not None:
@@ -194,5 +195,6 @@ class MainController(Observer, Waiter):
             self.screen.blit(logo, (480 - i * 2, 30))
             pygame.display.flip()
             clock.tick(10)
+
 
 

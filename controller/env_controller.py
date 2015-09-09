@@ -3,7 +3,7 @@ import pygame
 
 
 class EnvController:
-    screen_size = (600,630)
+    screen_size = (600,450)
 
     def __init__(self):
         return

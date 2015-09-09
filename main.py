@@ -20,12 +20,14 @@ intro_sound.play()
 start_time = time.time()
 while time.time() - start_time < 11:
     main_controller.intro(clock)
-background_music = pygame.mixer.Sound('resources/Haunted.ogg')
-background_music.play()
-start_time = time.time()
-main_controller.init_game(start_time)
-# Game loop
 
+background_music = pygame.mixer.Sound('resources/background_music.ogg')
+background_music.play()
+
+main_controller.init_game()
+
+# Game loop
+start_time = time.time()
 while not main_controller.quit_game:
     # Listen events
     event_controller.run()
@@ -37,6 +39,7 @@ while not main_controller.quit_game:
 
     # Approximately 60fps
     clock.tick(60)
-
-
 pygame.quit()
+
+#        end_background = pygame.image.load('resources/endgame.jpg')
+#        self.screen.blit(end_background, (0, 0))
