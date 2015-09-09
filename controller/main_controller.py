@@ -138,7 +138,6 @@ class MainController(Observer, Waiter):
                 self.stick_time = 0.05
 
             self.heads.append(head)
-
         self.head_timer = Timer(self.interval_head_appear, work)
         self.head_timer.start()
 
@@ -196,5 +195,12 @@ class MainController(Observer, Waiter):
             pygame.display.flip()
             clock.tick(10)
 
+    # finish game :
+    #   end_background = pygame.image.load('resources/endgame.jpg')
+    #   self.screen.blit(end_background, (0, 0))
+    #   Font = pygame.font.Font("resources/HorrorFont.ttf",64)
+    #   self.screen.blit(Font.render('Your score: ',True,(255,0,0)), (160, 100))
+    #   pygame.display.flip()
+    #   time.sleep(5)
 
 

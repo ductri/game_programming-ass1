@@ -41,5 +41,3 @@ while not main_controller.quit_game:
     clock.tick(60)
 pygame.quit()
 
-#        end_background = pygame.image.load('resources/endgame.jpg')
-#        self.screen.blit(end_background, (0, 0))
