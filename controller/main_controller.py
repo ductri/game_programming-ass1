@@ -84,3 +84,14 @@ class MainController(Observer, Waiter):
 
     def close(self):
         self.player.close()
+
+    def intro(self, clock):
+        self.screen.fill((0, 0, 0))
+        i = 0
+        while i < 58:
+            img = pygame.image.load('resources/intro/tmp-' + str(i) + '.gif')
+            i += 1
+            self.screen.blit(img, (30, 150))
+            pygame.display.flip()
+            clock.tick(10)
+

@@ -84,13 +84,14 @@ class Hammer(Customer, Observer):
             self.drawable_avatar = self.drawable_avatars[avatar_index]
             self.drawable_avatar.pos = self.pos
             print self.index
+            print self.index
 
             # Insert index as prefix keyword to sort
             key = str(self.drawable_avatar.index) + CUSTOMER_KEY.HAMMER
             self.register_waiter(key, self.drawable_avatar)
 
         if self.timer is None:
-            self.timer = Timer(0.5, work)
+            self.timer = Timer(0.01, work)
 
         if not self.hammering:
             self.timer.start()
