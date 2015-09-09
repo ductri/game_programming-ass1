@@ -14,6 +14,7 @@ from game_model.player import Player
 from game_model.drawable import Drawable
 
 import pygame
+import time
 
 
 class MainController(Observer, Waiter):
@@ -84,7 +85,7 @@ class MainController(Observer, Waiter):
             else:
                 self.player.decrease_score()
 
-    def init_game(self):
+    def init_game(self, start_time):
         """
         Init logically game
         :return: None
@@ -107,6 +108,9 @@ class MainController(Observer, Waiter):
 
         # Define work of timer: choose random a head and show it
         def work():
+            current_time = time.time()
+            if current_time - start_time <= 4:
+                return
             if self.pos_index > len(HolePosition.POS) - 2:
                 self.pos_index = 0
             i = 0
@@ -133,19 +137,22 @@ class MainController(Observer, Waiter):
                 self.stick_time = 0.05
 
             self.heads.append(head)
-        self.head_timer = Timer(self.interval_head_appear, work)
 
+        self.head_timer = Timer(self.interval_head_appear, work)
         self.head_timer.start()
 
-    def run(self):
+    def run(self, start_time):
         """
         Implement from Waiter. This function clear and then draw whole screen.
         :return: None
         """
+        current_time = time.time()
         self.screen.fill((255, 255, 255))
         for key in sorted(self.objects.keys()):     # TODO: Need to improve
             self.screen.blit(self.objects[key].bitmap, self.objects[key].pos)
-
+        if current_time - start_time <= 4:
+            Font = pygame.font.Font("resources/font.ttf",128)
+            self.screen.blit(Font.render(str(int(4 - current_time + start_time)),True,(255,0,0)), (280, 200))
     def __check_collision(self, rect_bound_hammer):
         """
         Check collision between player and head
@@ -176,7 +183,6 @@ class MainController(Observer, Waiter):
 
 
     def intro(self, clock):
-
         logo = pygame.image.load('resources/Logo.png')
         i = 0
         while i < 58:
