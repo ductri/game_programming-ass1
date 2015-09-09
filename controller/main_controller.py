@@ -52,6 +52,9 @@ class MainController(Observer, Waiter):
         #self.drawable_components = []
         self.heads = []
         self.head_timer = None
+        self.interval_head_appear = 3
+        self.appear_delay = 3
+        self.stick_time = 0.12
 
         # Init pygame
         pygame.init()
@@ -73,7 +76,9 @@ class MainController(Observer, Waiter):
         elif type_key == 'player_hammer':
             rect_bound_hammer = event
             head = self.__check_collision(rect_bound_hammer)
+
             if head:
+                print 'hit'
                 self.player.increase_score()
                 head.die()
             else:
@@ -96,33 +101,40 @@ class MainController(Observer, Waiter):
         self.player = Player(self.event_controller, self, self.screen)
         self.register(self.player, 'player_hammer')
 
-        # Init list of heads
-        head = Head('1', self)
-        self.heads.append(head)
-        head = Head('2', self)
-        self.heads.append(head)
-        head = Head('3', self)
-        self.heads.append(head)
-
-        #Draft
-        self.original_head_pos = (20, 200)
-
         self.pos_index = 0
 
         self.id = 0
+
         # Define work of timer: choose random a head and show it
         def work():
-            if self.pos_index > 7:
+            if self.pos_index > len(HolePosition.POS) - 2:
                 self.pos_index = 0
             i = 0
             
             self.id += 1
             self.pos_index += 1
             self.original_head_pos = HolePosition.POS[self.pos_index]
-            head = Head(str(self.id), self)
-            head.show(self.original_head_pos,3)
+            head = Head(str(self.id), self, self.stick_time)
+            pos = (self.original_head_pos[0] - 30, self.original_head_pos[1] - 40)
+            head.show(pos, self.appear_delay)
 
-        self.head_timer = Timer(3, work)
+            self.appear_delay -= 0.3
+            if self.appear_delay < 0.3:
+                self.appear_delay = 0.3
+
+
+            self.interval_head_appear -= 0.3
+            if self.interval_head_appear < 0.3:
+                self.interval_head_appear = 0.3
+
+            self.stick_time -= 0.1
+
+            if self.stick_time < 0.05:
+                self.stick_time = 0.05
+
+            self.heads.append(head)
+        self.head_timer = Timer(self.interval_head_appear, work)
+
         self.head_timer.start()
 
     def run(self):
@@ -139,17 +151,21 @@ class MainController(Observer, Waiter):
         Check collision between player and head
         :return:
         """
+        heads = []
         for head in self.heads:
-            if head.alive and head.showing:
+            if head.alive:
+                heads.append(head)
                 if rect_bound_hammer.colliderect(head.get_rect_bound()):
                     return head
+
+
+            self.heads = heads
         return None
 
     def close(self):
         self.player.close()
-        for head in self.heads:
-            head.close()
+        #for head in self.heads:
+        #    head.close()
 
         if self.head_timer is not None:
-            self.head_timer.stop()
             self.head_timer.close()
