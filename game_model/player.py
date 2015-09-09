@@ -59,6 +59,10 @@ class Player(Observer, Customer, Subject):
 
                 self.set_change('player_hammer', rect)
 
+                font = pygame.font.Font("resources/font.ttf", 40)
+                drawable_object = Drawable(font.render(str(self.score), True, (255, 0, 0)), (150, 490), DRAWABLE_INDEX.TIMER_COUNTER)
+                self.register_waiter('score', drawable_object)
+
         elif type_key == 'mouse_motion':
             if event.type == pygame.MOUSEMOTION:
                 # Just draw the one avatar in list avatars of hammer

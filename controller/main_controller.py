@@ -165,9 +165,16 @@ class MainController(Observer, Waiter):
 
         self.head_timer.start()
 
-        self.timer_counter = TimerCounter(self, 60, 50, (570, 400), (240, 5, 12))
+        self.timer_counter = TimerCounter(self, 60, 40, (570, 490), (240, 5, 12))
         self.register(self.timer_counter, 'time_up')
         self.timer_counter.run()
+
+        font = pygame.font.Font("resources/font.ttf", 40)
+        drawable_object = Drawable(font.render('Score: ', True, (255, 0, 0)), (15, 490), DRAWABLE_INDEX.TIMER_COUNTER)
+        self.register_waiter('score_text', drawable_object)
+
+        drawable_object = Drawable(font.render('0', True, (255, 0, 0)), (150, 490), DRAWABLE_INDEX.TIMER_COUNTER)
+        self.register_waiter('score', drawable_object)
 
     def run(self):
         """
@@ -248,9 +255,9 @@ class MainController(Observer, Waiter):
         self.screen.fill((0, 0, 0))
         end_background = pygame.image.load('resources/endgame.jpg')
         self.screen.blit(end_background, (20, 10))
-        Font = pygame.font.Font("resources/HorrorFont.ttf", 64)
-        self.screen.blit(Font.render('Your score:', True, (255, 0, 0)), (130, 100))
-        self.screen.blit(Font.render(str(self.player.score), True, (255, 0, 0)), (300, 200))
+        font = pygame.font.Font("resources/HorrorFont.ttf", 64)
+        self.screen.blit(font.render('Your score:', True, (255, 0, 0)), (130, 100))
+        self.screen.blit(font.render(str(self.player.score), True, (255, 0, 0)), (300, 200))
         pygame.display.flip()
         time.sleep(10)
 

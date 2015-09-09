@@ -34,6 +34,10 @@ class TimerCounter(Customer, Subject):
         def work():
             drawable_object = Drawable(font.render(str(self.time), True, self.color), self.pos, DRAWABLE_INDEX.TIMER_COUNTER)
             self.register_waiter(CUSTOMER_KEY.TIMER_COUNTER, drawable_object)
+
+            drawable_object = Drawable(font.render('Time remaining:', True, (255, 0, 0)), (self.pos[0] - 280, self.pos[1]), DRAWABLE_INDEX.TIMER_COUNTER)
+            self.register_waiter(CUSTOMER_KEY.TIMER_COUNTER+'sub', drawable_object)
+
             self.time -= 1
             if self.time < self.end + 1:
                 self.set_change('time_up', 'time_up')
