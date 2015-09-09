@@ -86,12 +86,16 @@ class MainController(Observer, Waiter):
         self.player.close()
 
     def intro(self, clock):
-        self.screen.fill((0, 0, 0))
+
+        logo = pygame.image.load('resources/Logo.png')
         i = 0
         while i < 58:
+            self.screen.fill((0, 0, 0))
             img = pygame.image.load('resources/intro/tmp-' + str(i) + '.gif')
             i += 1
             self.screen.blit(img, (30, 150))
+            self.screen.blit(logo, (i * 2, 30))
+            self.screen.blit(logo, (480 - i * 2, 30))
             pygame.display.flip()
             clock.tick(10)
 

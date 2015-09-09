@@ -21,6 +21,8 @@ start_time = time.time()
 while time.time() - start_time < 11:
     main_controller.intro(clock)
 
+background_music = pygame.mixer.Sound('resources/Haunted.ogg')
+background_music.play()
 # Game loop
 while not main_controller.quit_game:
     # Listen events
