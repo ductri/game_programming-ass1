@@ -73,6 +73,10 @@ class Head(Customer):
 
         self.stick_time = stick_time
 
+        self.sound_head_appear = Factory.get_sound('head_appear')
+        self.sound_head_disappear = Factory.get_sound('head_disappear')
+        self.sound_head_hit = Factory.get_sound('head_hit')
+
         return
 
     def appear(self, pos):
@@ -121,6 +125,7 @@ class Head(Customer):
             self.appear_timer = Timer(self.stick_time, do_animation)
 
         self.appear_timer.start()
+        self.sound_head_appear.play()
 
     def disappear(self):
         self.alive = False
@@ -151,6 +156,7 @@ class Head(Customer):
             self.disappear_timer = Timer(self.stick_time, do_animation)
 
         self.disappear_timer.start()
+        self.sound_head_disappear.play()
 
     def show(self, pos, duration):
         self.appear(pos)
@@ -212,6 +218,7 @@ class Head(Customer):
         self.main_timer.stop()
 
         self.die_timer.start()
+        self.sound_head_hit.play()
 
     def get_rect_bound(self):
         return self.rect_bound
