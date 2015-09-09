@@ -192,6 +192,8 @@ class MainController(Observer, Waiter):
             self.screen.blit(img, (30, 150))
             self.screen.blit(logo, (i * 2, 30))
             self.screen.blit(logo, (480 - i * 2, 30))
+            Font = pygame.font.Font("resources/HorrorFont.ttf",64)
+            self.screen.blit(Font.render('PUNCH ZOMBIE ',True,(255,0,0)), (100, 100))
             pygame.display.flip()
             clock.tick(10)
 
