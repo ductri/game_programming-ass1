@@ -28,7 +28,8 @@ main_controller.init_game()
 
 # Game loop
 start_time = time.time()
-while not main_controller.quit_game:
+restart = False
+while not main_controller.quit_game or not restart:
     # Listen events
     event_controller.run()
 

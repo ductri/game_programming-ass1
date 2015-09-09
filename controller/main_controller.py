@@ -205,4 +205,7 @@ class MainController(Observer, Waiter):
     #   pygame.display.flip()
     #   time.sleep(5)
 
+    # play again
+    #         Font = pygame.font.Font("resources/restart.ttf",32)
+    #    self.screen.blit(Font.render('Press R to play again ',True,(255,0,0)), (160, 100))
 
