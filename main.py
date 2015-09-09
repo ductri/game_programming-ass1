@@ -20,7 +20,7 @@ intro_sound.play()
 
 start_time = time.time()
 while time.time() - start_time < 11:
-    main_controller.intro
+    main_controller.intro(clock)
 
 background_music = pygame.mixer.Sound('resources/background_music.ogg')
 background_music.play()

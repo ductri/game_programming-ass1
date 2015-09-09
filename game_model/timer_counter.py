@@ -13,12 +13,12 @@ import pygame
 class TimerCounter(Customer, Subject):
 
     def __init__(self, waiter, end, font_size, pos, color):
-        self.end = end
+        self.end = 0
         self.font_size = font_size
         self.pos = pos
         self.color = color
 
-        self.time = 0
+        self.time = end
         Customer.__init__(self, waiter)
 
         self.timer = None
@@ -34,8 +34,8 @@ class TimerCounter(Customer, Subject):
         def work():
             drawable_object = Drawable(font.render(str(self.time), True, self.color), self.pos, DRAWABLE_INDEX.TIMER_COUNTER)
             self.register_waiter(CUSTOMER_KEY.TIMER_COUNTER, drawable_object)
-            self.time += 1
-            if self.time > self.end:
+            self.time -= 1
+            if self.time < self.end + 1:
                 self.set_change('time_up', 'time_up')
 
         self.timer = Timer(1, work)
