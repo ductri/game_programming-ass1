@@ -14,7 +14,7 @@ class Factory:
         return
 
     def get_background():
-        return pygame.image.load('resources/background.jpg')
+        return pygame.image.load('resources/background.PNG')
 
     # Make static function
     get_background = staticmethod(get_background)
