@@ -81,5 +81,13 @@ class Factory:
             return pygame.mixer.Sound('resources/dota2_sound/prepare4battle.ogg')
         elif name.lower() == 'first_blood':
             return pygame.mixer.Sound('resources/dota2_sound/first_blood.ogg')
+        elif name.lower() == 'double_kill':
+            return pygame.mixer.Sound('resources/dota2_sound/double_kill.ogg')
+        elif name.lower() == 'triple_kill':
+            return pygame.mixer.Sound('resources/dota2_sound/triple_kill.ogg')
+        elif name.lower() == 'ultra_kill':
+            return pygame.mixer.Sound('resources/dota2_sound/ultra_kill.ogg')
+        elif name.lower() == 'rampage':
+            return pygame.mixer.Sound('resources/dota2_sound/rampage.ogg')
 
     get_sound = staticmethod(get_sound)

@@ -39,7 +39,7 @@ class MainController(Observer, Waiter):
         self.event_controller = event_controller
         self.env = env
 
-        #set some value for head
+        # Set some value for head
         self.number_of_enemy = NUM_SPRITES.NUMBER_OF_ENEMY
         self.time_to_create_new = DURATION.TIME_CREATE_NEW
         self.max_of_current_enemy = NUM_SPRITES.MAX_OF_CURRENT_ENEMY
@@ -70,6 +70,18 @@ class MainController(Observer, Waiter):
         self.sound_first_blood = Factory.get_sound('first_blood')
         if self.sound_first_blood is None:
             raise NotImplementedError
+        self.sound_double_kill = Factory.get_sound('double_kill')
+        if self.sound_double_kill is None:
+            raise NotImplementedError
+        self.sound_triple_kill = Factory.get_sound('triple_kill')
+        if self.sound_triple_kill is None:
+            raise NotImplementedError
+        self.sound_ultra_kill = Factory.get_sound('ultra_kill')
+        if self.sound_ultra_kill is None:
+            raise NotImplementedError
+        self.sound_rampage_kill = Factory.get_sound('rampage')
+        if self.sound_rampage_kill is None:
+            raise NotImplementedError
 
         self.screen = pygame.display.set_mode(self.env.screen_size)
         pygame.mouse.set_visible(False)    # Hide default mouse cursor
@@ -78,6 +90,7 @@ class MainController(Observer, Waiter):
         self.stage = None
         self.id = 0
         self.finish = False
+        self.num_head_kill_in_section = 0
 
     def update(self, type_key, event):
         """
@@ -100,6 +113,17 @@ class MainController(Observer, Waiter):
                 if self.is_first_blood:
                     self.sound_first_blood.play()
                     self.is_first_blood = False
+
+                self.num_head_kill_in_section += 1
+                print self.num_head_kill_in_section
+                if self.num_head_kill_in_section == 2:
+                    self.sound_double_kill.play()
+                if self.num_head_kill_in_section == 3:
+                    self.sound_triple_kill.play()
+                if self.num_head_kill_in_section == 4:
+                    self.sound_ultra_kill.play()
+                if self.num_head_kill_in_section == 5:
+                    self.sound_rampage_kill.play()
             else:
                 self.player.decrease_score()
         elif type_key == 'time_up':
@@ -127,12 +151,10 @@ class MainController(Observer, Waiter):
     def start_game(self):
         self.id = 0
 
-        # Define work of timer: choose random a head and show it
+        # Define work of timer: choose random a number of head and show them
         def work():
-            # current_time = time.time()
-            # if current_time - start_time <= 4:
-            #     return
-            num_head = random.randint(1, 5)
+            self.num_head_kill_in_section = 0
+            num_head = 7 #random.randint(1, 5)
             positions = range(8)
             random.shuffle(positions)
 
@@ -230,8 +252,8 @@ class MainController(Observer, Waiter):
             self.screen.blit(img, (30, 150))
             self.screen.blit(logo, (i * 2, 30))
             self.screen.blit(logo, (480 - i * 2, 30))
-            Font = pygame.font.Font("resources/HorrorFont.ttf",64)
-            self.screen.blit(Font.render('PUNCH ZOMBIE ',True,(255,0,0)), (100, 100))
+            Font = pygame.font.Font("resources/HorrorFont.ttf", 64)
+            self.screen.blit(Font.render('PUNCH ZOMBIE ', True, (255, 0, 0)), (100, 100))
             pygame.display.flip()
             clock.tick(10)
 
